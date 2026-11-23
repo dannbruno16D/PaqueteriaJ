@@ -47,8 +47,13 @@ El desarrollo colaborativo se organizó mediante ramas independientes integradas
 
 ## ▶️ Cómo Ejecutar el Proyecto
 
-1. **Clonar el repositorio:**
+1. Clonar el repositorio:
 
-```bash
-git clone [https://github.com/dannbruno16D/PaqueteriaJ.git](https://github.com/dannbruno16D/PaqueteriaJ.git)
-cd PaqueteriaJ/djp
+git clone https://github.com/dannbruno16D/PaqueteriaJ.git && cd PaqueteriaJ/djp
+
+2. Levantar el servidor con Maven Wrapper: Windows / PowerShell: `.\mvnw.cmd spring-boot:run` Linux / macOS: Bash `./mvnw spring-boot:run` Abrir en el navegador (puerto `8080`): Inicio / Rastreo: `http://localhost:8080/` Paquetes: `http://localhost:8080/paquetes` Unidades y Personal: `http://localhost:8080/unidades` H2 Console: `http://localhost:8080/h2-console` JDBC URL: `jdbc:h2:mem:paqueteriadjpdb` User Name: `sa` Password: `(vacío)`
+
+## Datos Iniciales Precargados
+
+* Al iniciar la aplicación por primera vez (`DataInitializer`), se cargan automáticamente registros base de prueba en memoria para probar el rastreo de paquetes, el historial de estados, las unidades y los usuarios.
+* Puedes consultar o exportar todo el contenido generado directamente desde la consola H2 en `http://localhost:8080/h2-console` o revisar el respaldo en `djp/export_djp.sql`.
