@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paquetería DJP</title>
+    <link rel="stylesheet" th:href="@{/css/djp.css}">
+</head>
+<body>
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-badge">DJP</div>
+        <h1>Panel de Logística y <span>Paquetería DJP</span></h1>
+    </div>
+    <form class="inline-form" th:action="@{/}" method="get">
+        <input type="text" name="codigo" placeholder="Buscar código (ej. DJP-100001)" th:value="${codigoBuscado}">
+        <button type="submit" class="btn btn-sm">Rastrear</button>
+    </form>
+</header>
+
+<main class="container">
+    <section class="card" th:if="${codigoBuscado != null}">
+        <h2>Resultado de Rastreo: <span th:text="${codigoBuscado}"></span></h2>
+        <div class="rastreo-box" th:if="${resultadoRastreo != null}">
+            <p><strong>Destinatario:</strong> <span th:text="${resultadoRastreo.destinatario}"></span></p>
+            <p><strong>Dirección:</strong> <span th:text="${resultadoRastreo.direccionDestino}"></span></p>
+            <p><strong>Estado actual:</strong> <span class="badge-estado" th:text="${resultadoRastreo.estado}"></span></p>
+        </div>
+        <div class="rastreo-box" th:if="${resultadoRastreo == null}">
+            <p class="muted">No se encontró ningún paquete con ese código de rastreo.</p>
+        </div>
+    </section>
+
+    <section class="grid-2">
+        <div class="card">
+            <h2>Registrar Nuevo Paquete</h2>
+            <form th:action="@{/paquetes/registrar}" method="post" class="form-grid">
+                <div class="form-group">
+                    <label for="codigoRastreo">Código de rastreo (opcional)</label>
+                    <input id="codigoRastreo" type="text" name="codigoRastreo" placeholder="Auto-generado si vacío">
+                </div>
+                <div class="form-group">
+                    <label for="remitente">Remitente</label>
+                    <input id="remitente" type="text" name="remitente" required>
+                </div>
+                <div class="form-group">
+                    <label for="destinatario">Destinatario</label>
+                    <input id="destinatario" type="text" name="destinatario" required>
+                </div>
+                <div class="form-group">
+                    <label for="pesoKg">Peso (kg)</label>
+                    <input id="pesoKg" type="number" step="0.1" min="0.1" name="pesoKg" required>
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="direccionDestino">Dirección de destino</label>
+                    <input id="direccionDestino" type="text" name="direccionDestino" required>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <button type="submit" class="btn">Guardar Paquete</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Registrar Unidad de Reparto</h2>
+            <form th:action="@{/unidades/registrar}" method="post" class="form-grid">
+                <div class="form-group">
+                    <label for="numeroEconomico">Número económico</label>
+                    <input id="numeroEconomico" type="text" name="numeroEconomico" placeholder="Ej. DJP-03" required>
+                </div>
+                <div class="form-group">
+                    <label for="tipoUnidad">Tipo de unidad</label>
+                    <input id="tipoUnidad" type="text" name="tipoUnidad" placeholder="Ej. Camioneta" required>
+                </div>
+                <div class="form-group">
+                    <label for="capacidadKg">Capacidad (kg)</label>
+                    <input id="capacidadKg" type="number" step="1" min="1" name="capacidadKg" required>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <button type="submit" class="btn">Agregar Unidad</button>
+                </div>
+            </form>
+
+            <div class="table-wrap" style="margin-top: 1.1rem;">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Económico</th>
+                        <th>Tipo</th>
+                        <th>Capacidad</th>
+                        <th>Acción</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="u : ${unidades}">
+                        <td th:text="${u.numeroEconomico}"></td>
+                        <td th:text="${u.tipoUnidad}"></td>
+                        <td th:text="${u.capacidadKg + ' kg'}"></td>
+                        <td>
+                            <form th:action="@{/unidades/{id}/eliminar(id=${u.id})}" method="post" class="inline-form">
+                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Paquetes Registrados</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Destinatario</th>
+                    <th>Destino</th>
+                    <th>Peso</th>
+                    <th>Estado</th>
+                    <th>Cambiar Estado</th>
+                    <th>Asignar Envío</th>
+                    <th>Eliminar</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${paquetes}">
+                    <td><strong th:text="${p.codigoRastreo}"></strong></td>
+                    <td th:text="${p.destinatario}"></td>
+                    <td th:text="${p.direccionDestino}"></td>
+                    <td th:text="${p.pesoKg + ' kg'}"></td>
+                    <td><span class="badge-estado" th:text="${p.estado}"></span></td>
+                    <td>
+                        <form th:action="@{/paquetes/{id}/estado(id=${p.id})}" method="post" class="inline-form">
+                            <select name="estado">
+                                <option th:each="est : ${estados}"
+                                        th:value="${est}"
+                                        th:text="${est}"
+                                        th:selected="${est == p.estado}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-sm">Actualizar</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form th:action="@{/paquetes/{id}/asignar(id=${p.id})}" method="post" class="inline-form">
+                            <select name="transportistaId">
+                                <option value="">-- Transportista --</option>
+                                <option th:each="t : ${transportistas}"
+                                        th:value="${t.id}"
+                                        th:text="${t.nombreCompleto}"
+                                        th:selected="${p.transportista != null && p.transportista.id == t.id}"></option>
+                            </select>
+                            <select name="unidadId">
+                                <option value="">-- Unidad --</option>
+                                <option th:each="un : ${unidades}"
+                                        th:value="${un.id}"
+                                        th:text="${un.numeroEconomico}"
+                                        th:selected="${p.unidad != null && p.unidad.id == un.id}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-sm">Asignar</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form th:action="@{/paquetes/{id}/eliminar(id=${p.id})}" method="post" class="inline-form">
+                            <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>
