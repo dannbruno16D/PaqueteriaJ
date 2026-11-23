@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paquetería DJP · Paquetes</title>
+    <link rel="stylesheet" th:href="@{/djp.css}">
+</head>
+<body>
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-badge">DJP</div>
+        <div>
+            <h1>Paquetería <span>DJP</span></h1>
+            <p class="subtitle">Gestión de envíos, estados y rutas</p>
+        </div>
+    </div>
+    <nav class="nav-links">
+        <a th:href="@{/}" class="nav-link">Inicio / Rastreo</a>
+        <a th:href="@{/paquetes}" class="nav-link active">Paquetes</a>
+        <a th:href="@{/unidades}" class="nav-link">Unidades y Personal</a>
+    </nav>
+</header>
+
+<main class="container">
+    <div class="alert-codigo" th:if="${codigoGenerado != null}">
+        <span>Paquete registrado correctamente. Código de rastreo asignado:</span>
+        <strong class="codigo-highlight" th:text="${codigoGenerado}"></strong>
+    </div>
+
+    <section class="card">
+        <h2>Registrar Nuevo Paquete</h2>
+        <form th:action="@{/paquetes/registrar}" method="post" class="form-grid">
+            <div class="form-group">
+                <label for="remitente">Remitente</label>
+                <input id="remitente" type="text" name="remitente" required>
+            </div>
+            <div class="form-group">
+                <label for="destinatario">Destinatario</label>
+                <input id="destinatario" type="text" name="destinatario" required>
+            </div>
+            <div class="form-group">
+                <label for="telefonoContacto">Número de teléfono</label>
+                <input id="telefonoContacto" type="text" name="telefonoContacto" placeholder="Ej. 712-123-4567" required>
+            </div>
+            <div class="form-group">
+                <label for="codigoPostal">Código postal</label>
+                <input id="codigoPostal" type="text" name="codigoPostal" placeholder="Ej. 50450" required>
+            </div>
+            <div class="form-group">
+                <label for="descripcionContenido">¿Qué contiene? (artículo)</label>
+                <input id="descripcionContenido" type="text" name="descripcionContenido" placeholder="Ej. Lámpara de buró" required>
+            </div>
+            <div class="form-group">
+                <label for="pesoKg">Peso (kg)</label>
+                <input id="pesoKg" type="number" step="0.1" min="0.1" name="pesoKg" required>
+            </div>
+            <div class="form-group">
+                <label for="direccionDestino">Dirección de destino</label>
+                <input id="direccionDestino" type="text" name="direccionDestino" required>
+            </div>
+            <div class="form-group">
+                <label for="detalleUbicacion">Mensaje de ubicación / aduana (opcional)</label>
+                <input id="detalleUbicacion" type="text" name="detalleUbicacion" placeholder="Ej. En Toluca · Aduana 1">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn">Guardar y Generar Código</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Paquetes Registrados</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Contenido / Contacto</th>
+                    <th>Destino y C.P.</th>
+                    <th>Peso</th>
+                    <th>Estado, Ubicación e Historial</th>
+                    <th>Actualizar Estado</th>
+                    <th>Asignar Envío</th>
+                    <th>Eliminar</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${paquetes}">
+                    <td><strong class="codigo-highlight" th:text="${p.codigoRastreo}"></strong></td>
+                    <td>
+                        <div th:text="${p.descripcionContenido}"></div>
+                        <div class="muted-sm"><strong>Para:</strong> <span th:text="${p.destinatario}"></span></div>
+                        <div class="muted-sm"><strong>Tel:</strong> <span th:text="${p.telefonoContacto}"></span></div>
+                    </td>
+                    <td>
+                        <div th:text="${p.direccionDestino}"></div>
+                        <div class="muted-sm"><strong>C.P.:</strong> <span th:text="${p.codigoPostal}"></span></div>
+                    </td>
+                    <td th:text="${p.pesoKg + ' kg'}"></td>
+                    <td>
+                        <span class="badge-estado" th:text="${p.estado}"></span>
+                        <div class="estado-submensaje-sm"
+                             th:text="${p.detalleUbicacion != null && !#strings.isEmpty(p.detalleUbicacion) ? p.detalleUbicacion : 'En Toluca · Aduana 1'}"></div>
+                        <div class="historial-mini" th:if="${p.historial != null && !#lists.isEmpty(p.historial)}">
+                            <div th:each="h : ${p.historial}" class="historial-mini-item">
+                                <span th:text="${h.estado}"></span> · <span th:text="${h.detalleUbicacion}"></span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <form th:action="@{/paquetes/{id}/estado(id=${p.id})}" method="post" class="stack-form">
+                            <select name="estado">
+                                <option th:each="est : ${estados}"
+                                        th:value="${est}"
+                                        th:text="${est}"
+                                        th:selected="${est == p.estado}"></option>
+                            </select>
+                            <input type="text"
+                                   name="detalleUbicacion"
+                                   placeholder="Ej. En Toluca · Aduana 1">
+                            <button type="submit" class="btn btn-sm">Agregar Estado</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form th:action="@{/paquetes/{id}/asignar(id=${p.id})}" method="post" class="stack-form">
+                            <select name="transportistaId">
+                                <option value="">-- Transportista --</option>
+                                <option th:each="t : ${transportistas}"
+                                        th:value="${t.id}"
+                                        th:text="${t.nombreCompleto}"
+                                        th:selected="${p.transportista != null && p.transportista.id == t.id}"></option>
+                            </select>
+                            <select name="unidadId">
+                                <option value="">-- Unidad --</option>
+                                <option th:each="un : ${unidades}"
+                                        th:value="${un.id}"
+                                        th:text="${un.numeroEconomico}"
+                                        th:selected="${p.unidad != null && p.unidad.id == un.id}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-sm">Asignar</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form th:action="@{/paquetes/{id}/eliminar(id=${p.id})}" method="post">
+                            <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

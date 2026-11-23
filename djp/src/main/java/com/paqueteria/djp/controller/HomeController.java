@@ -5,7 +5,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.paqueteria.djp.model.EstadoPaquete;
 import com.paqueteria.djp.service.PaqueteService;
 import com.paqueteria.djp.service.UnidadService;
 import com.paqueteria.djp.service.UsuarioService;
@@ -25,10 +24,10 @@ public class HomeController {
 
     @GetMapping("/")
     public String inicio(@RequestParam(required = false) String codigo, Model model) {
-        model.addAttribute("paquetes", paqueteService.listarTodos());
-        model.addAttribute("unidades", unidadService.listarTodas());
-        model.addAttribute("transportistas", usuarioService.listarTransportistasActivos());
-        model.addAttribute("estados", EstadoPaquete.values());
+        model.addAttribute("activePage", "inicio");
+        model.addAttribute("totalPaquetes", paqueteService.listarTodos().size());
+        model.addAttribute("totalUnidades", unidadService.listarTodas().size());
+        model.addAttribute("totalTransportistas", usuarioService.listarTransportistasActivos().size());
 
         if (codigo != null && !codigo.isBlank()) {
             model.addAttribute("resultadoRastreo", paqueteService.buscarPorCodigo(codigo.trim()).orElse(null));
