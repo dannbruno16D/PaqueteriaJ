@@ -1,0 +1,30 @@
+@startuml 01_casos_uso_general
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Cliente / Destinatario" as Cliente
+actor "Operador / ADMIN" as Admin
+actor "TRANSPORTISTA" as Transportista
+
+rectangle "Paquetería DJP (Sistema Web MVC)" {
+  usecase "UC01: Consultar estado de envío\npor código de rastreo" as UC1
+  usecase "UC02: Registrar nuevo paquete y\ngenerar código único" as UC2
+  usecase "UC03: Consultar listado general\nde paquetes" as UC3
+  usecase "UC04: Actualizar estado y ubicación\ndel paquete" as UC4
+  usecase "UC05: Asignar transportista y\nunidad de reparto" as UC5
+  usecase "UC06: Eliminar registro de paquete" as UC6
+  usecase "UC07: Administrar unidades y personal" as UC7
+}
+
+Cliente --> UC1
+
+Admin --> UC2
+Admin --> UC3
+Admin --> UC4
+Admin --> UC5
+Admin --> UC6
+Admin --> UC7
+
+Transportista --> UC3
+Transportista --> UC4
+@enduml
