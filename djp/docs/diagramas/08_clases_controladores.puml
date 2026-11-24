@@ -1,4 +1,4 @@
-@startuml
+@startuml 08_clases_controladores
 skinparam classAttributeIconSize 0
 
 package "com.paqueteria.djp" {

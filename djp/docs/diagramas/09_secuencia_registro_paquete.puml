@@ -1,4 +1,4 @@
-@startuml
+@startuml 09_secuencia_registro_paquete
 autonumber
 actor "Operador / ADMIN" as Admin
 participant "Navegador Web\n(paquetes.html)" as UI

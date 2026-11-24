@@ -1,4 +1,4 @@
-@startuml
+@startuml 05_clases_modelo_entidades
 skinparam classAttributeIconSize 0
 
 package "com.paqueteria.djp.model" {

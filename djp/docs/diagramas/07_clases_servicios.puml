@@ -1,4 +1,4 @@
-@startuml
+@startuml 07_clases_servicios
 skinparam classAttributeIconSize 0
 
 package "com.paqueteria.djp.service" {

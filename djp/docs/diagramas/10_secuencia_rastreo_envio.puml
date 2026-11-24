@@ -1,4 +1,4 @@
-@startuml
+@startuml 10_secuencia_rastreo_envio
 autonumber
 actor "Cliente / Destinatario" as Cliente
 participant "Navegador Web\n(index.html)" as UI

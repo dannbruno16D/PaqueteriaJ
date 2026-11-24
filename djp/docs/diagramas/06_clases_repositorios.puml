@@ -1,4 +1,4 @@
-@startuml
+@startuml 06_clases_repositorios
 skinparam classAttributeIconSize 0
 
 interface "JpaRepository<T, ID>" as JpaRepo {
