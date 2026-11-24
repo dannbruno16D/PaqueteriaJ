@@ -19,6 +19,8 @@
         <a th:href="@{/}" class="nav-link active">Inicio / Rastreo</a>
         <a th:href="@{/paquetes}" class="nav-link">Paquetes</a>
         <a th:href="@{/unidades}" class="nav-link">Unidades y Personal</a>
+        <a th:if="${session.usuarioLogueado == null}" th:href="@{/login}" class="nav-link">Iniciar sesión</a>
+        <a th:if="${session.usuarioLogueado != null}" th:href="@{/logout}" class="nav-link" th:text="'Cerrar sesión (' + ${session.usuarioLogueado} + ')'">Cerrar sesión</a>
     </nav>
 </header>
 

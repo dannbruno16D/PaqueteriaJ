@@ -1,0 +1,30 @@
+@startuml 10_secuencia_rastreo_envio
+autonumber
+actor "Cliente / Destinatario" as Cliente
+participant "Navegador Web\n(index.html)" as UI
+participant "HomeController" as Ctrl
+participant "PaqueteService" as Svc
+participant "PaqueteRepository" as Repo
+participant "H2 Database" as DB
+
+Cliente -> UI : Ingresa código de rastreo y pulsa "Rastrear"
+UI -> Ctrl : GET /?codigo=DJP-XXXXXXXX
+Ctrl -> Svc : buscarPorCodigo(codigo)
+activate Svc
+Svc -> Repo : findByCodigoRastreoIgnoreCase(codigo)
+Repo -> DB : SELECT * FROM PAQUETES WHERE CODIGO_RASTREO = ?
+DB --> Repo : Fila de Paquete + HistorialEstado
+Repo --> Svc : Optional<Paquete>
+Svc --> Ctrl : Optional<Paquete>
+deactivate Svc
+
+alt Código encontrado
+  Ctrl -> Ctrl : model.addAttribute("paquete", paquete)
+  Ctrl --> UI : Renderiza index.html con tarjeta de estado y cronología
+  UI --> Cliente : Muestra ubicación actual e historial del envío
+else Código inexistente
+  Ctrl -> Ctrl : model.addAttribute("error", "Código no encontrado")
+  Ctrl --> UI : Renderiza index.html con alerta de error
+  UI --> Cliente : Informa que el código no existe
+end
+@enduml

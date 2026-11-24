@@ -1,0 +1,70 @@
+@startuml 04_clases_arquitectura_mvc
+skinparam classAttributeIconSize 0
+
+package "com.paqueteria.djp.controller" {
+  class HomeController {
+    - paqueteService: PaqueteService
+    + inicio(codigo: String, model: Model): String
+  }
+  class PaqueteController {
+    - paqueteService: PaqueteService
+    - unidadService: UnidadService
+    - usuarioService: UsuarioService
+    + vistaPaquetes(model: Model): String
+    + registrar(paquete: Paquete, redirectAttributes: RedirectAttributes): String
+  }
+  class UnidadController {
+    - unidadService: UnidadService
+    - usuarioService: UsuarioService
+    + vistaUnidades(model: Model): String
+    + registrarUnidad(unidad: Unidad): String
+    + registrarUsuario(usuario: Usuario): String
+  }
+}
+
+package "com.paqueteria.djp.service" {
+  class PaqueteService {
+    + listarTodos(): List<Paquete>
+    + buscarPorCodigo(codigo: String): Optional<Paquete>
+    + registrar(paquete: Paquete): Paquete
+  }
+  class UnidadService {
+    + listarTodas(): List<Unidad>
+    + registrar(unidad: Unidad): Unidad
+  }
+  class UsuarioService {
+    + listarTransportistasActivos(): List<Usuario>
+    + registrar(usuario: Usuario): Usuario
+  }
+}
+
+package "com.paqueteria.djp.model" {
+  class Paquete {
+    - id: Long
+    - codigoRastreo: String
+    - destinatario: String
+    - estado: EstadoPaquete
+  }
+  class Unidad {
+    - id: Long
+    - numeroEconomico: String
+    - capacidadKg: Double
+  }
+  class Usuario {
+    - id: Long
+    - nombreCompleto: String
+    - rol: RolUsuario
+  }
+}
+
+HomeController --> PaqueteService
+PaqueteController --> PaqueteService
+PaqueteController --> UnidadService
+PaqueteController --> UsuarioService
+UnidadController --> UnidadService
+UnidadController --> UsuarioService
+
+PaqueteService ..> Paquete : gestiona
+UnidadService ..> Unidad : gestiona
+UsuarioService ..> Usuario : gestiona
+@enduml
