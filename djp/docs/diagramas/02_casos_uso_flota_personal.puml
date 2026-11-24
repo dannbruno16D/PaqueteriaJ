@@ -1,0 +1,27 @@
+@startuml 02_casos_uso_flota_personal
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Administrador (ADMIN)" as Admin
+actor "Base de Datos H2" as DB
+
+rectangle "Módulo de Unidades y Personal (/unidades)" {
+  usecase "UC08: Registrar unidad de reparto\n(número económico, tipo, capacidad)" as UC8
+  usecase "UC09: Consultar catálogo de unidades\nregistradas" as UC9
+  usecase "UC10: Eliminar unidad de reparto" as UC10
+  usecase "UC11: Registrar personal operativo\n(ADMIN / TRANSPORTISTA)" as UC11
+  usecase "UC12: Consultar listado de personal\nregistrado" as UC12
+  usecase "UC13: Validar disponibilidad de recursos\npara asignación" as UC13
+}
+
+Admin --> UC8
+Admin --> UC9
+Admin --> UC10
+Admin --> UC11
+Admin --> UC12
+
+UC8 ..> DB : persiste en UNIDADES
+UC11 ..> DB : persiste en USUARIOS
+UC13 ..> UC9 : <<include>>
+UC13 ..> UC12 : <<include>>
+@enduml

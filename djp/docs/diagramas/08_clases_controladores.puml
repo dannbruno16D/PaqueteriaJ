@@ -1,0 +1,49 @@
+@startuml 08_clases_controladores
+skinparam classAttributeIconSize 0
+
+package "com.paqueteria.djp" {
+  class DjpApplication {
+    + {static} main(args: String[]): void
+  }
+}
+
+package "com.paqueteria.djp.controller" {
+  class HomeController {
+    - paqueteService: PaqueteService
+    + HomeController(paqueteService: PaqueteService)
+    + inicio(codigo: String, model: Model): String
+  }
+
+  class PaqueteController {
+    - paqueteService: PaqueteService
+    - unidadService: UnidadService
+    - usuarioService: UsuarioService
+    + PaqueteController(paqueteService: PaqueteService, unidadService: UnidadService, usuarioService: UsuarioService)
+    + vistaPaquetes(model: Model): String
+    + registrar(paquete: Paquete, redirectAttributes: RedirectAttributes): String
+    + actualizarEstado(id: Long, estado: EstadoPaquete, detalleUbicacion: String): String
+    + asignarEnvio(id: Long, transportistaId: Long, unidadId: Long): String
+    + eliminar(id: Long): String
+  }
+
+  class UnidadController {
+    - unidadService: UnidadService
+    - usuarioService: UsuarioService
+    + UnidadController(unidadService: UnidadService, usuarioService: UsuarioService)
+    + vistaUnidades(model: Model): String
+    + registrarUnidad(unidad: Unidad): String
+    + registrarUsuario(usuario: Usuario): String
+    + eliminarUnidad(id: Long): String
+  }
+}
+
+DjpApplication ..> HomeController
+DjpApplication ..> PaqueteController
+DjpApplication ..> UnidadController
+HomeController --> PaqueteService
+PaqueteController --> PaqueteService
+PaqueteController --> UnidadService
+PaqueteController --> UsuarioService
+UnidadController --> UnidadService
+UnidadController --> UsuarioService
+@enduml
