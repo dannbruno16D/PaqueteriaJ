@@ -1,0 +1,36 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+interface "JpaRepository<T, ID>" as JpaRepo {
+  + save(entity: S): S
+  + findAll(): List<T>
+  + findById(id: ID): Optional<T>
+  + deleteById(id: ID): void
+}
+
+package "com.paqueteria.djp.repository" {
+  interface PaqueteRepository {
+    + findByCodigoRastreoIgnoreCase(codigo: String): Optional<Paquete>
+    + findAllByOrderByFechaRegistroDesc(): List<Paquete>
+  }
+
+  interface HistorialEstadoRepository {
+    + findByPaqueteIdOrderByFechaEventoDesc(paqueteId: Long): List<HistorialEstado>
+  }
+
+  interface UnidadRepository {
+    + findByDisponibleTrue(): List<Unidad>
+    + existsByNumeroEconomico(numeroEconomico: String): boolean
+  }
+
+  interface UsuarioRepository {
+    + findByRolAndActivoTrue(rol: RolUsuario): List<Usuario>
+    + findByUsuario(usuario: String): Optional<Usuario>
+  }
+}
+
+JpaRepo <|-- PaqueteRepository
+JpaRepo <|-- HistorialEstadoRepository
+JpaRepo <|-- UnidadRepository
+JpaRepo <|-- UsuarioRepository
+@enduml

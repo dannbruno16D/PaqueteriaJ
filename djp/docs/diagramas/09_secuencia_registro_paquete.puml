@@ -1,0 +1,30 @@
+@startuml
+autonumber
+actor "Operador / ADMIN" as Admin
+participant "Navegador Web\n(paquetes.html)" as UI
+participant "PaqueteController" as Ctrl
+participant "PaqueteService" as Svc
+participant "PaqueteRepository" as Repo
+participant "H2 Database" as DB
+
+Admin -> UI : Completa formulario de paquete y envía
+UI -> Ctrl : POST /paquetes/registrar (@ModelAttribute Paquete)
+Ctrl -> Svc : registrar(paquete)
+activate Svc
+Svc -> Svc : generarCodigoUnico() -> "DJP-XXXXXXXX"
+Svc -> Svc : setEstado(EstadoPaquete.REGISTRADO)
+Svc -> Repo : save(paquete)
+Repo -> DB : INSERT INTO PAQUETES (...)
+DB --> Repo : Registro persistido con ID
+Svc -> DB : INSERT INTO HISTORIAL_ESTADOS (...)
+DB --> Svc : Evento inicial guardado
+Svc --> Ctrl : guardado: Paquete
+deactivate Svc
+Ctrl -> Ctrl : redirectAttributes.addFlashAttribute("codigoGenerado", guardado.getCodigoRastreo())
+Ctrl --> UI : HTTP 302 Redirect -> /paquetes
+UI -> Ctrl : GET /paquetes
+Ctrl -> Svc : listarTodos()
+Svc --> Ctrl : List<Paquete>
+Ctrl --> UI : Renderiza paquetes.html con código generado
+UI --> Admin : Muestra confirmación con código de rastreo
+@enduml

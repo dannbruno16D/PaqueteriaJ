@@ -1,0 +1,20 @@
+@startuml
+left to right direction
+skinparam componentStyle rectangle
+
+actor "Administrador (ADMIN)" as Admin
+component "unidades.html\n(Vista)" as Vista
+component "UnidadController" as Ctrl
+component "UnidadService" as USvc
+component "UsuarioService" as UsSvc
+component "UnidadRepository" as URepo
+component "UsuarioRepository" as UsRepo
+
+Admin --> Vista : 1: Envía formulario de unidad o usuario
+Vista --> Ctrl : 2: POST /unidades/registrar | /usuarios/registrar
+Ctrl --> USvc : 3a: registrar(unidad)
+USvc --> URepo : 4a: save(unidad)
+Ctrl --> UsSvc : 3b: registrar(usuario)
+UsSvc --> UsRepo : 4b: save(usuario)
+Ctrl --> Vista : 5: redirect:/unidades (vista actualizada)
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Operador Logístico" as Op
+actor "TRANSPORTISTA" as Trans
+actor "Cliente / Remitente" as Cli
+
+rectangle "Control de Estados y Auditoría (/paquetes y /)" {
+  usecase "UC14: Dar de alta envío en\nestado REGISTRADO" as UC14
+  usecase "UC15: Clasificar paquete en\nEN_ALMACEN" as UC15
+  usecase "UC16: Asignar unidad y conductor\nal envío" as UC16
+  usecase "UC17: Actualizar paquete a EN_RUTA\ncon detalle de ubicación" as UC17
+  usecase "UC18: Registrar INCIDENCIA o\nconfirmar ENTREGADO" as UC18
+  usecase "UC19: Visualizar cronología en\nHISTORIAL_ESTADOS" as UC19
+}
+
+Op --> UC14
+Op --> UC15
+Op --> UC16
+Op --> UC19
+
+Trans --> UC17
+Trans --> UC18
+
+Cli --> UC19
+
+UC14 ..> UC19 : genera evento inicial
+UC17 ..> UC19 : registra movimiento
+UC18 ..> UC19 : registra cierre/incidencia
+@enduml

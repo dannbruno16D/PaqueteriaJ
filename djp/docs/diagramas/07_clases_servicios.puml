@@ -1,0 +1,41 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "com.paqueteria.djp.service" {
+  class PaqueteService {
+    - paqueteRepository: PaqueteRepository
+    - historialEstadoRepository: HistorialEstadoRepository
+    - unidadRepository: UnidadRepository
+    - usuarioRepository: UsuarioRepository
+    + listarTodos(): List<Paquete>
+    + buscarPorCodigo(codigo: String): Optional<Paquete>
+    + registrar(paquete: Paquete): Paquete
+    + agregarEstado(id: Long, estado: EstadoPaquete, detalleUbicacion: String): void
+    + asignar(id: Long, transportistaId: Long, unidadId: Long): void
+    + eliminar(id: Long): void
+    - generarCodigoUnico(): String
+  }
+
+  class UnidadService {
+    - unidadRepository: UnidadRepository
+    + listarTodas(): List<Unidad>
+    + listarDisponibles(): List<Unidad>
+    + registrar(unidad: Unidad): Unidad
+    + eliminar(id: Long): void
+  }
+
+  class UsuarioService {
+    - usuarioRepository: UsuarioRepository
+    + listarTodos(): List<Usuario>
+    + listarTransportistasActivos(): List<Usuario>
+    + registrar(usuario: Usuario): Usuario
+  }
+}
+
+PaqueteService --> PaqueteRepository
+PaqueteService --> HistorialEstadoRepository
+PaqueteService --> UnidadRepository
+PaqueteService --> UsuarioRepository
+UnidadService --> UnidadRepository
+UsuarioService --> UsuarioRepository
+@enduml
