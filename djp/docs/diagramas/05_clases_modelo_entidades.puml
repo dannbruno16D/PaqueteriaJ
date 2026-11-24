@@ -1,0 +1,86 @@
+@startuml 05_clases_modelo_entidades
+skinparam classAttributeIconSize 0
+
+package "com.paqueteria.djp.model" {
+  class Paquete {
+    - id: Long
+    - codigoRastreo: String
+    - remitente: String
+    - destinatario: String
+    - telefonoContacto: String
+    - codigoPostal: String
+    - direccionDestino: String
+    - descripcionContenido: String
+    - pesoKg: Double
+    - fechaRegistro: LocalDateTime
+    - detalleUbicacion: String
+    - estado: EstadoPaquete
+    - transportista: Usuario
+    - unidad: Unidad
+    - historial: List<HistorialEstado>
+    + getId(): Long
+    + getCodigoRastreo(): String
+    + setEstado(estado: EstadoPaquete): void
+    + agregarHistorial(evento: HistorialEstado): void
+  }
+
+  class HistorialEstado {
+    - id: Long
+    - fechaEvento: LocalDateTime
+    - detalleUbicacion: String
+    - estado: EstadoPaquete
+    - paquete: Paquete
+    + getId(): Long
+    + getFechaEvento(): LocalDateTime
+    + getDetalleUbicacion(): String
+    + getEstado(): EstadoPaquete
+  }
+
+  class Unidad {
+    - id: Long
+    - numeroEconomico: String
+    - tipoUnidad: String
+    - capacidadKg: Double
+    - disponible: Boolean
+    + getId(): Long
+    + getNumeroEconomico(): String
+    + getTipoUnidad(): String
+    + getCapacidadKg(): Double
+    + isDisponible(): Boolean
+  }
+
+  class Usuario {
+    - id: Long
+    - nombreCompleto: String
+    - usuario: String
+    - password: String
+    - rol: RolUsuario
+    - activo: Boolean
+    + getId(): Long
+    + getNombreCompleto(): String
+    + getUsuario(): String
+    + getRol(): RolUsuario
+    + isActivo(): Boolean
+  }
+
+  enum EstadoPaquete {
+    REGISTRADO
+    EN_ALMACEN
+    EN_RUTA
+    INCIDENCIA
+    ENTREGADO
+  }
+
+  enum RolUsuario {
+    ADMIN
+    TRANSPORTISTA
+  }
+}
+
+Paquete "1" *-- "0..*" HistorialEstado : historial
+Paquete "0..*" --> "0..1" Usuario : transportista_id
+Paquete "0..*" --> "0..1" Unidad : unidad_id
+Paquete --> EstadoPaquete
+HistorialEstado --> EstadoPaquete
+Usuario --> RolUsuario
+@enduml
